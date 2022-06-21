@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "./components/Card";
 import { images } from "./images/index.js";
+import "./styles/App.css";
 
 function App() {
   const defaultGameElements = images.map((image) => {
@@ -8,16 +9,20 @@ function App() {
   });
   const [gamePieces, setGamePieces] = useState(defaultGameElements);
 
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+
   function handleClick(index) {
     const newGamePieces = [...gamePieces];
     if (newGamePieces[index].clicked === true) {
       setGamePieces(defaultGameElements);
-      return
+      setScore(0)
+      return;
     }
     newGamePieces[index].clicked = true;
-    shuffleArray(newGamePieces)
+    shuffleArray(newGamePieces);
     setGamePieces(newGamePieces);
-    
+    setScore(score + 1);
   }
 
   function shuffleArray(array) {
@@ -27,10 +32,16 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    if (score > highScore) {
+      setHighScore(score)
+    }
+  },[score, highScore])
+
   return (
     <div className="App">
-      <h1>Hello World</h1>
-      <div>
+      <h1>Memory Game</h1>
+      <div className="board">
         {gamePieces.map((element, i) => {
           return (
             <div
@@ -44,10 +55,8 @@ function App() {
           );
         })}
       </div>
-      <button onClick={() => console.log(gamePieces)}>Print game pieces</button>
-      <div>{gamePieces.filter(piece => {
-        return piece.clicked === true;
-      }).length} Points</div>
+      <h4>Points: {score}</h4>
+      <h4>High Score: {highScore}</h4>
     </div>
   );
 }
